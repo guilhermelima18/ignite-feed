@@ -1,0 +1,32 @@
+.buttonEdit {
+  background-color: transparent;
+  border: 1px solid var(--green-light);
+  color: var(--green-light);
+  border-radius: 8px;
+  padding: 16px 24px 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 400ms;
+
+  &:hover {
+    background-color: var(--green);
+    color: var(--white);
+  }
+}
+
+.buttonPublish {
+  background-color: var(--green);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 16px 24px 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 400ms;
+  border: 0;
+
+  &:hover {
+    background-color: var(--green-light);
+  }
+}
