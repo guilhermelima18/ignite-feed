@@ -1,6 +1,9 @@
 .homeWrapper {
   width: 100%;
-  max-width: 1440px;
-  display: flex;
+  max-width: 1120px;
+  display: grid;
+  grid-template-columns: 256px 1fr;
+  align-items: flex-start;
   margin: 2rem auto;
+  gap: 2rem;
 }

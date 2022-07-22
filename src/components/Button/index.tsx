@@ -7,13 +7,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   mode: "publish" | "edit";
 }
 
-export const Button = ({ textButton, mode }: ButtonProps) => {
+export const Button = ({ textButton, mode, ...rest }: ButtonProps) => {
   return (
     <>
       {mode === "edit" ? (
-        <button className={styles.buttonEdit}>{textButton}</button>
+        <button className={styles.buttonEdit} {...rest}>
+          {textButton}
+        </button>
       ) : (
-        <button className={styles.buttonPublish}>{textButton}</button>
+        <button className={styles.buttonPublish} {...rest}>
+          {textButton}
+        </button>
       )}
     </>
   );
