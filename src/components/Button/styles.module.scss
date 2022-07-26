@@ -5,6 +5,9 @@
   border-radius: 8px;
   padding: 16px 24px 14px;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: bold;
   cursor: pointer;
   transition: 400ms;

@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes } from "react";
+import { PencilLine } from "phosphor-react";
 
 import styles from "./styles.module.scss";
 
@@ -12,6 +13,7 @@ export const Button = ({ textButton, mode, ...rest }: ButtonProps) => {
     <>
       {mode === "edit" ? (
         <button className={styles.buttonEdit} {...rest}>
+          <PencilLine size={20} />
           {textButton}
         </button>
       ) : (

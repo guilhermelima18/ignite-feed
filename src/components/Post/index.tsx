@@ -14,7 +14,15 @@ interface PostsProps {
 
 export const Post = () => {
   const [textarea, setTextarea] = useState<string>("");
-  const [posts, setPosts] = useState<PostsProps[]>([]);
+  const [posts, setPosts] = useState<PostsProps[]>(() => {
+    const getPostsStorage = localStorage.getItem("@ignite-feed");
+
+    if (getPostsStorage) {
+      return JSON.parse(getPostsStorage);
+    }
+
+    return [];
+  });
 
   const generateRandomNumber = (min: number, max: number) => {
     const randomId = Math.random() * (max - min) + min;
@@ -29,7 +37,23 @@ export const Post = () => {
     };
 
     setPosts([...posts, newComment]);
+
+    localStorage.setItem(
+      "@ignite-feed",
+      JSON.stringify([...posts, newComment])
+    );
+
     setTextarea("");
+  };
+
+  const removeComment = (postId: number) => {
+    const newPosts = [...posts];
+    const commentIndex = newPosts.findIndex((post) => post.id === postId);
+
+    newPosts.splice(commentIndex, 1);
+    setPosts([...newPosts]);
+
+    localStorage.setItem("@ignite-feed", JSON.stringify(newPosts));
   };
 
   return (
@@ -78,7 +102,13 @@ export const Post = () => {
       </section>
       <section>
         {posts &&
-          posts.map((post) => <CardComments key={post.id} post={post} />)}
+          posts.map((post) => (
+            <CardComments
+              key={post.id}
+              post={post}
+              removeComment={removeComment}
+            />
+          ))}
       </section>
     </section>
   );

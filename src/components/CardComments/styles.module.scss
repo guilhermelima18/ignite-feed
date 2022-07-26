@@ -77,4 +77,15 @@
       }
     }
   }
+
+  .btnTrash {
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+
+    & > svg {
+      color: var(--red);
+    }
+  }
 }
