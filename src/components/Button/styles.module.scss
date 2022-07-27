@@ -21,10 +21,15 @@
 .buttonPublish {
   background-color: var(--green);
   color: var(--white);
+  width: 100%;
+  max-width: 150px;
   border-radius: 8px;
   padding: 16px 24px 14px;
   font-size: 1rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: 400ms;
   border: 0;

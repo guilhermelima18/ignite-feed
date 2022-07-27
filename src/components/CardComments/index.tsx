@@ -4,15 +4,17 @@ import profileImage from "../../assets/profile-image-03.png";
 import styles from "./styles.module.scss";
 
 interface CardCommentsProps {
-  post: {
+  comment: {
     id: number;
+    postId: string;
     name: string;
     comment: string;
+    publishedAt: Date;
   };
-  removeComment: (postId: number) => void;
+  /* removeComment: (postId: number) => void; */
 }
 
-export const CardComments = ({ post, removeComment }: CardCommentsProps) => {
+export const CardComments = ({ comment }: CardCommentsProps) => {
   return (
     <div className={styles.mainComments}>
       <div className={styles.imageBox}>
@@ -23,19 +25,19 @@ export const CardComments = ({ post, removeComment }: CardCommentsProps) => {
           <header>
             <div>
               <h4>
-                {post.name} <span>(você)</span>
+                {comment.name} <span>(você)</span>
               </h4>
               <p>Cerca de 2h</p>
             </div>
             <button
               className={styles.btnTrash}
-              onClick={() => removeComment(post.id)}
+              /* onClick={() => removeComment(comment.id)} */
             >
               <Trash size={20} />
             </button>
           </header>
           <div className={styles.comment}>
-            <h5>{post.comment}</h5>
+            <h5>{comment.comment}</h5>
           </div>
         </main>
         <footer>

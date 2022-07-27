@@ -1,87 +1,87 @@
-import { useState } from "react";
-import profileImage from "../../assets/profile-image-02.png";
+import { useEffect, useState } from "react";
+import { generateNumber } from "../../helpers/generateNumber";
+import { useComments } from "../../hooks/useComments";
+import { PostsProps } from "../../types/Posts";
 import { Button } from "../Button";
 import { CardComments } from "../CardComments";
+import { SkeletonLoading } from "../SkeletonLoading";
 import { Textarea } from "../Textarea";
 
 import styles from "./styles.module.scss";
 
-interface PostsProps {
+interface CommentsProps {
   id: number;
   name: string;
   comment: string;
 }
 
-export const Post = () => {
+interface PostProps {
+  post: PostsProps;
+}
+
+export const Post = ({ post }: PostProps) => {
+  const {
+    getComments,
+    createComments,
+    comments,
+    loading: loadingGetComments,
+  } = useComments();
+  const [loadingComment, setLoadingComment] = useState(false);
   const [textarea, setTextarea] = useState<string>("");
-  const [posts, setPosts] = useState<PostsProps[]>(() => {
-    const getPostsStorage = localStorage.getItem("@ignite-feed");
+  const [newComment, setNewComment] = useState(false);
 
-    if (getPostsStorage) {
-      return JSON.parse(getPostsStorage);
+  const loading = loadingComment || loadingGetComments;
+
+  useEffect(() => {
+    if (post.id) {
+      getComments(post.id);
     }
+  }, [newComment]);
 
-    return [];
-  });
-
-  const generateRandomNumber = (min: number, max: number) => {
-    const randomId = Math.random() * (max - min) + min;
-    return Number(randomId.toFixed(2));
-  };
-
-  const createComment = () => {
-    let newComment = {
-      id: generateRandomNumber(5, 1000),
-      name: "Guilherme Lima",
+  const createComment = async (postId: number) => {
+    setLoadingComment(true);
+    const params = {
+      name: "Teste",
       comment: textarea,
+      publishedAt: new Date(),
     };
 
-    setPosts([...posts, newComment]);
+    const response = await createComments(Number(postId), params);
 
-    localStorage.setItem(
-      "@ignite-feed",
-      JSON.stringify([...posts, newComment])
-    );
+    if (response?.status === 201) {
+      setNewComment(true);
+    }
 
+    setLoadingComment(false);
     setTextarea("");
   };
 
-  const removeComment = (postId: number) => {
-    const newPosts = [...posts];
-    const commentIndex = newPosts.findIndex((post) => post.id === postId);
+  /* const removeComment = (postId: number) => {
+    const newComments = [...comments];
+    const commentIndex = newComments.findIndex((post) => post.id === postId);
 
-    newPosts.splice(commentIndex, 1);
-    setPosts([...newPosts]);
+    newComments.splice(commentIndex, 1);
+    setComments([...newComments]);
 
-    localStorage.setItem("@ignite-feed", JSON.stringify(newPosts));
-  };
+    localStorage.setItem("@ignite-feed", JSON.stringify(newComments));
+  }; */
 
   return (
     <section className={styles.sectionPost}>
       <header className={styles.headerPost}>
         <div className={styles.profilePost}>
-          <img src={profileImage} alt="Imagem de Perfil" />
+          <img src={post.avatarUrl} alt="Imagem de Perfil" />
           <div>
-            <h3>Jane Cooper</h3>
-            <span>Dev Front-End</span>
+            <h3>{post.author}</h3>
+            <span>{post.role}</span>
           </div>
         </div>
-        <p>Publicado há 1h</p>
+        <p>Publicado em {post.publishedAt.toString()}</p>
       </header>
       <main className={styles.mainPost}>
-        <h4>Fala galera 👋</h4>
+        <h4>{post.content.title}</h4>
         <br />
-        <h4>
-          Acabei de subir mais um projeto no meu portifa. É um projeto que fiz
-          no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀
-        </h4>
-        <br />
-        <h4 className={styles.link}>
-          👉 jane.design/doctorcare
-          <br />
-          <br />
-          #novoprojeto #nlw #rocketseat
-        </h4>
+        <h4>{post.content.text}</h4>
       </main>
       <section className={styles.feedbackPost}>
         <h3>Deixe seu feedback</h3>
@@ -95,20 +95,26 @@ export const Post = () => {
             <Button
               textButton="Publicar"
               mode="publish"
-              onClick={createComment}
+              onClick={() => createComment(post.id)}
+              isLoading={loading}
             />
           )}
         </div>
       </section>
       <section>
-        {posts &&
-          posts.map((post) => (
+        {loading ? (
+          <SkeletonLoading />
+        ) : comments.length === 0 ? (
+          <p className={styles.noComments}>Sem comentários</p>
+        ) : (
+          comments.map((comment) => (
             <CardComments
-              key={post.id}
-              post={post}
-              removeComment={removeComment}
+              key={comment.id}
+              comment={comment}
+              /* removeComment={removeComment} */
             />
-          ))}
+          ))
+        )}
       </section>
     </section>
   );

@@ -1,0 +1,35 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "avatarUrl": "https://github.com/guilhermelima18.png",
+      "author": "Guilherme Lima",
+      "role": "Desenvolvedor Front-end",
+      "publishedAt": "2022-07-26 17:00:00",
+      "content": {
+        "title": "Fala galera 👋",
+        "text": "Acabei de subir mais um projeto no meu portifa. É um projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀"
+      }
+    },
+    {
+      "id": 2,
+      "avatarUrl": "https://github.com/diego3g.png",
+      "author": "Diego Fernandes",
+      "role": "CTO @Rocketseat",
+      "publishedAt": "2022-07-23 13:30:00",
+      "content": {
+        "title": "Fala dev 👋",
+        "text": "Acabei de subir mais um projeto no Ignite. É um projeto que utiliza Next.js, SSR, SSG. O nome do projeto é DoctorCare 🚀"
+      }
+    }
+  ],
+  "comments": [
+    {
+      "name": "Teste",
+      "comment": "Parabéns cara!!!",
+      "publishedAt": "2022-07-27T02:24:37.667Z",
+      "postId": "1",
+      "id": 1
+    }
+  ]
+}

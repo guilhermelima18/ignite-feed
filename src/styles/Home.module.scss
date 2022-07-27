@@ -6,4 +6,9 @@
   align-items: flex-start;
   margin: 2rem auto;
   gap: 2rem;
+
+  .loadingContainer {
+    min-height: 50vh;
+    flex: 1;
+  }
 }
