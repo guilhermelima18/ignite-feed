@@ -1,5 +1,5 @@
-import { Trash } from "phosphor-react";
-import profileImage from "../../assets/profile-image-03.png";
+import { ThumbsUp, Trash } from "phosphor-react";
+import { useState } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -7,18 +7,28 @@ interface CardCommentsProps {
   comment: {
     id: number;
     postId: string;
+    avatarUrl: string;
     name: string;
     comment: string;
     publishedAt: Date;
   };
-  /* removeComment: (postId: number) => void; */
+  handleDeleteComment: (commentId: number, postId: number) => void;
 }
 
-export const CardComments = ({ comment }: CardCommentsProps) => {
+export const CardComments = ({
+  comment,
+  handleDeleteComment,
+}: CardCommentsProps) => {
+  const [applaudComment, setApplaudComment] = useState(0);
+
+  const handleApplaudComment = () => {
+    setApplaudComment((prevState) => prevState + 1);
+  };
+
   return (
     <div className={styles.mainComments}>
       <div className={styles.imageBox}>
-        <img src={profileImage} alt="Imagem de Perfil" />
+        <img src={comment.avatarUrl} alt="Imagem de Perfil" />
       </div>
       <div className={styles.main}>
         <main>
@@ -27,11 +37,13 @@ export const CardComments = ({ comment }: CardCommentsProps) => {
               <h4>
                 {comment.name} <span>(você)</span>
               </h4>
-              <p>Cerca de 2h</p>
+              <p>{comment.publishedAt.toString()}</p>
             </div>
             <button
               className={styles.btnTrash}
-              /* onClick={() => removeComment(comment.id)} */
+              onClick={() =>
+                handleDeleteComment(comment.id, Number(comment.postId))
+              }
             >
               <Trash size={20} />
             </button>
@@ -41,7 +53,11 @@ export const CardComments = ({ comment }: CardCommentsProps) => {
           </div>
         </main>
         <footer>
-          <span>Aplaudir</span>
+          <button className={styles.btnTrash} onClick={handleApplaudComment}>
+            <ThumbsUp size={16} weight="light" color="white" />
+            Aplaudir
+          </button>
+          {applaudComment > 0 && <span>{applaudComment}</span>}
         </footer>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { generateNumber } from "../../helpers/generateNumber";
+import { useCallback, useEffect, useState } from "react";
+import { faker } from "@faker-js/faker";
 import { useComments } from "../../hooks/useComments";
 import { PostsProps } from "../../types/Posts";
 import { Button } from "../Button";
@@ -9,12 +9,6 @@ import { Textarea } from "../Textarea";
 
 import styles from "./styles.module.scss";
 
-interface CommentsProps {
-  id: number;
-  name: string;
-  comment: string;
-}
-
 interface PostProps {
   post: PostsProps;
 }
@@ -23,48 +17,72 @@ export const Post = ({ post }: PostProps) => {
   const {
     getComments,
     createComments,
+    removeComment,
     comments,
     loading: loadingGetComments,
   } = useComments();
-  const [loadingComment, setLoadingComment] = useState(false);
-  const [textarea, setTextarea] = useState<string>("");
-  const [newComment, setNewComment] = useState(false);
+  const [commentPost, setCommentPost] = useState<string>("");
 
-  const loading = loadingComment || loadingGetComments;
+  const loading = loadingGetComments;
 
   useEffect(() => {
     if (post.id) {
       getComments(post.id);
     }
-  }, [newComment]);
+  }, []);
 
-  const createComment = async (postId: number) => {
-    setLoadingComment(true);
-    const params = {
-      name: "Teste",
-      comment: textarea,
-      publishedAt: new Date(),
-    };
+  const createComment = useCallback(
+    async (postId: number) => {
+      const randomName = faker.name.findName();
+      const randomAvatarUrl = faker.image.people(300, 300, true);
 
-    const response = await createComments(Number(postId), params);
+      const createCommentParams = {
+        name: randomName,
+        avatarUrl: randomAvatarUrl,
+        comment: commentPost,
+        publishedAt: new Date(),
+      };
 
-    if (response?.status === 201) {
-      setNewComment(true);
-    }
+      const response = await createComments(postId, createCommentParams);
 
-    setLoadingComment(false);
-    setTextarea("");
+      if (response?.status === 201) {
+        getComments(postId);
+        setCommentPost("");
+      }
+    },
+    [commentPost]
+  );
+
+  const deleteComment = useCallback(
+    async (commentId: number, postId: number) => {
+      const response = await removeComment(commentId);
+
+      if (response?.status === 200) {
+        getComments(postId);
+      }
+    },
+    []
+  );
+
+  const LoadingOrCardComments = () => {
+    return (
+      <section>
+        {loading ? (
+          <SkeletonLoading />
+        ) : comments.length === 0 ? (
+          <p className={styles.noComments}>Sem comentários</p>
+        ) : (
+          comments.map((comment) => (
+            <CardComments
+              key={comment.id}
+              comment={comment}
+              handleDeleteComment={deleteComment}
+            />
+          ))
+        )}
+      </section>
+    );
   };
-
-  /* const removeComment = (postId: number) => {
-    const newComments = [...comments];
-    const commentIndex = newComments.findIndex((post) => post.id === postId);
-
-    newComments.splice(commentIndex, 1);
-    setComments([...newComments]);
-
-    localStorage.setItem("@ignite-feed", JSON.stringify(newComments));
-  }; */
 
   return (
     <section className={styles.sectionPost}>
@@ -76,7 +94,7 @@ export const Post = ({ post }: PostProps) => {
             <span>{post.role}</span>
           </div>
         </div>
-        <p>Publicado em {post.publishedAt.toString()}</p>
+        <time>{post.publishedAt.toString()}</time>
       </header>
       <main className={styles.mainPost}>
         <h4>{post.content.title}</h4>
@@ -87,11 +105,11 @@ export const Post = ({ post }: PostProps) => {
         <h3>Deixe seu feedback</h3>
         <div className={styles.feedbackText}>
           <Textarea
-            value={textarea}
-            setValue={setTextarea}
+            value={commentPost}
+            setValue={setCommentPost}
             placeholder="Escreva um comentário..."
           />
-          {textarea.length > 0 && (
+          {commentPost.length > 0 && (
             <Button
               textButton="Publicar"
               mode="publish"
@@ -101,21 +119,7 @@ export const Post = ({ post }: PostProps) => {
           )}
         </div>
       </section>
-      <section>
-        {loading ? (
-          <SkeletonLoading />
-        ) : comments.length === 0 ? (
-          <p className={styles.noComments}>Sem comentários</p>
-        ) : (
-          comments.map((comment) => (
-            <CardComments
-              key={comment.id}
-              comment={comment}
-              /* removeComment={removeComment} */
-            />
-          ))
-        )}
-      </section>
+      <LoadingOrCardComments />
     </section>
   );
 };
